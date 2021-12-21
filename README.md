@@ -1,4 +1,4 @@
-# uFrida - for Android
+# uFrida - Undetected Frida for Android
 
 Follow [FRIDA](https://github.com/frida/frida) upstream to automatic patch and build an anti-detection version of frida-server for android.
 
