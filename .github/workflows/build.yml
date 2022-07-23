@@ -84,7 +84,7 @@ jobs:
 
     - uses: actions/setup-node@v2.1.4
       with:
-        node-version: '10'
+        node-version: '11'
 
     - uses: fusion-engineering/setup-git-credentials@v2
       with:
