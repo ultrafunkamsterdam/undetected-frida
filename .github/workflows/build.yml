@@ -44,7 +44,7 @@ jobs:
                 data: { tag_name: ver }
               } = releaseResponse;
               if (ver == '${{ steps.pullFridaLatestRelease.outputs.FRIDA_VERSION }}'){
-                  core.setOutput('ALREADY_RELEASE', '0');    # '1'
+                  core.setOutput('ALREADY_RELEASE', '0');
               }
               else{
                   core.setOutput('ALREADY_RELEASE', '0');
