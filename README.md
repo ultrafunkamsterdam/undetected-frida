@@ -1,4 +1,4 @@
-# uFrida - Undetected Frida for Android
+# Undetected Frida for Android
 
 This repo follows [FRIDA](https://github.com/frida/frida) upstream, and automatically releases the same version with some anti-detection patches applied.
 You can find the releases here on the right --->
@@ -7,7 +7,7 @@ You can find the releases here on the right --->
 
 ## Patchs
 
-[Git Patch Files](https://github.com/ultrafunkamsterdam/Patchs/tree/master/strongR-frida/frida-core)
+[Git Patch Files](https://github.com/ultrafunkamsterdam/undetected-frida-patches)
 
 |module|name|
 |-|-|
@@ -22,7 +22,8 @@ You can find the releases here on the right --->
 
 ## Download
 
-[Latest Release](https://github.com/ultrafunkamsterdam/uFrida/releases/latest)
+[Latest Release](https://github.com/ultrafunkamsterdam/undetected-frida/releases/latest)
+
 
 ## References
 
