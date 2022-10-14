@@ -60,7 +60,7 @@ jobs:
   create_release:
     needs: check_version
     runs-on: ubuntu-20.04
-    if: needs.check_version.outputs.ALREADY_RELEASE == '0'
+    #if: needs.check_version.outputs.ALREADY_RELEASE == '0'
 
     steps:
       - uses: actions/create-release@master
