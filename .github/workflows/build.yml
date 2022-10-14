@@ -1,4 +1,4 @@
-name: undetected-frida
+name: Undetected-Frida
 
 on:
   schedule:
@@ -57,8 +57,6 @@ jobs:
                 core.setFailed(e.message);
               }
             }
-
-
   create_release:
     needs: check_version
     runs-on: ubuntu-20.04
@@ -80,11 +78,10 @@ jobs:
     needs: [check_version, create_release]
 
     steps:
-    - uses: actions/checkout@v2.3.4
-
-    - uses: actions/setup-node@v2.1.4
+    - uses: actions/checkout@v3
+    - uses: actions/setup-node@v3
       with:
-        node-version: '16'
+        node-version: 16
 
     - uses: fusion-engineering/setup-git-credentials@v2
       with:
@@ -99,7 +96,7 @@ jobs:
       id: setup-ndk
       uses: nttld/setup-ndk@v1.0.6
       with:
-        ndk-version: r24-beta1
+        ndk-version: r25b
 
     - name: Set up Python 3.8
       uses: actions/setup-python@v2
@@ -111,7 +108,6 @@ jobs:
         sudo apt-get update && DEBIAN_FRONTEND=noninteractive sudo apt-get install build-essential tree ninja-build gcc-multilib g++-multilib lib32stdc++-9-dev flex bison xz-utils ruby ruby-dev python3-requests python3-setuptools python3-dev python3-pip libc6-dev libc6-dev-i386 -y
         sudo gem install fpm -v 1.11.0 --no-document
         python3 -m pip install lief
-
     - name: build frida for Android
       shell: bash
       run: |
@@ -121,14 +117,12 @@ jobs:
         export ANDROID_NDK_ROOT=${{ steps.setup-ndk.outputs.ndk-path }}
         git clone --recurse-submodules https://github.com/frida/frida
         cd frida/frida-core
-        git am ../../undetected-frida-patches/*.patch
+        git am ../../Patchs/Undetected-Frida/frida-core/*.patch
         cd ../
         make core-android-arm
         make core-android-arm64
         make core-android-x86
         make core-android-x86_64
-
-
     - name: Check release version
       id: checkReleaseVersion
       uses: actions/github-script@v3.1.0
@@ -184,7 +178,7 @@ jobs:
       with:
         upload_url: '${{ steps.checkReleaseVersion.outputs.upload_url }}'
         asset_path: '${{ github.workspace }}/frida/build/frida-android-arm/bin/frida-server.xz'
-        asset_name: 'undetected-frida-server-${{ needs.check_version.outputs.FRIDA_VERSION }}-android-arm.xz'
+        asset_name: 'hluda-server-${{ needs.check_version.outputs.FRIDA_VERSION }}-android-arm.xz'
         asset_content_type: application/octet-stream
 
     - name: Upload android arm64 frida-server for Undetected-Frida
@@ -194,7 +188,7 @@ jobs:
       with:
         upload_url: '${{ steps.checkReleaseVersion.outputs.upload_url }}'
         asset_path: '${{ github.workspace }}/frida/build/frida-android-arm64/bin/frida-server.xz'
-        asset_name: 'undetected-frida-server-${{ needs.check_version.outputs.FRIDA_VERSION }}-android-arm64.xz'
+        asset_name: 'hluda-server-${{ needs.check_version.outputs.FRIDA_VERSION }}-android-arm64.xz'
         asset_content_type: application/octet-stream
 
     - name: Upload android x86 frida-server for Undetected-Frida
@@ -204,7 +198,7 @@ jobs:
       with:
         upload_url: '${{ steps.checkReleaseVersion.outputs.upload_url }}'
         asset_path: '${{ github.workspace }}/frida/build/frida-android-x86/bin/frida-server.xz'
-        asset_name: 'undetected-frida-server-${{ needs.check_version.outputs.FRIDA_VERSION }}-android-x86.xz'
+        asset_name: 'hluda-server-${{ needs.check_version.outputs.FRIDA_VERSION }}-android-x86.xz'
         asset_content_type: application/octet-stream
 
     - name: Upload android x86_64 frida-server for Undetected-Frida
@@ -214,7 +208,7 @@ jobs:
       with:
         upload_url: '${{ steps.checkReleaseVersion.outputs.upload_url }}'
         asset_path: '${{ github.workspace }}/frida/build/frida-android-x86_64/bin/frida-server.xz'
-        asset_name: 'undetected-frida-server-${{ needs.check_version.outputs.FRIDA_VERSION }}-android-x86_64.xz'
+        asset_name: 'hluda-server-${{ needs.check_version.outputs.FRIDA_VERSION }}-android-x86_64.xz'
         asset_content_type: application/octet-stream
         
     - name: Upload android arm frida-inject for Undetected-Frida
@@ -224,7 +218,7 @@ jobs:
       with:
         upload_url: '${{ steps.checkReleaseVersion.outputs.upload_url }}'
         asset_path: '${{ github.workspace }}/frida/build/frida-android-arm/bin/frida-inject.xz'
-        asset_name: 'undetected-frida-inject-${{ needs.check_version.outputs.FRIDA_VERSION }}-android-arm.xz'
+        asset_name: 'hluda-inject-${{ needs.check_version.outputs.FRIDA_VERSION }}-android-arm.xz'
         asset_content_type: application/octet-stream
         
     - name: Upload android arm64 frida-inject for Undetected-Frida
@@ -234,7 +228,7 @@ jobs:
       with:
         upload_url: '${{ steps.checkReleaseVersion.outputs.upload_url }}'
         asset_path: '${{ github.workspace }}/frida/build/frida-android-arm64/bin/frida-inject.xz'
-        asset_name: 'undetected-frida-inject-${{ needs.check_version.outputs.FRIDA_VERSION }}-android-arm64.xz'
+        asset_name: 'hluda-inject-${{ needs.check_version.outputs.FRIDA_VERSION }}-android-arm64.xz'
         asset_content_type: application/octet-stream
         
     - name: Upload android x86 frida-inject for Undetected-Frida
@@ -244,7 +238,7 @@ jobs:
       with:
         upload_url: '${{ steps.checkReleaseVersion.outputs.upload_url }}'
         asset_path: '${{ github.workspace }}/frida/build/frida-android-x86/bin/frida-inject.xz'
-        asset_name: 'undetected-frida-inject-${{ needs.check_version.outputs.FRIDA_VERSION }}-android-x86.xz'
+        asset_name: 'hluda-inject-${{ needs.check_version.outputs.FRIDA_VERSION }}-android-x86.xz'
         asset_content_type: application/octet-stream
         
     - name: Upload android x86_64 frida-inject for Undetected-Frida
@@ -254,7 +248,7 @@ jobs:
       with:
         upload_url: '${{ steps.checkReleaseVersion.outputs.upload_url }}'
         asset_path: '${{ github.workspace }}/frida/build/frida-android-x86_64/bin/frida-inject.xz'
-        asset_name: 'undetected-frida-inject-${{ needs.check_version.outputs.FRIDA_VERSION }}-android-arm-x86_64.xz'
+        asset_name: 'hluda-inject-${{ needs.check_version.outputs.FRIDA_VERSION }}-android-arm-x86_64.xz'
         asset_content_type: application/octet-stream
     
     - name: Upload android arm frida-gadget for Undetected-Frida
@@ -264,7 +258,7 @@ jobs:
       with:
         upload_url: '${{ steps.checkReleaseVersion.outputs.upload_url }}'
         asset_path: '${{ github.workspace }}/frida/build/frida-android-arm/lib/frida/32/frida-gadget.so.xz'
-        asset_name: 'undetected-frida-gadget-${{ needs.check_version.outputs.FRIDA_VERSION }}-android-arm.so.xz'
+        asset_name: 'hluda-gadget-${{ needs.check_version.outputs.FRIDA_VERSION }}-android-arm.so.xz'
         asset_content_type: application/octet-stream
 
     - name: Upload android arm64 frida-gadget for Undetected-Frida
@@ -274,6 +268,6 @@ jobs:
       with:
         upload_url: '${{ steps.checkReleaseVersion.outputs.upload_url }}'
         asset_path: '${{ github.workspace }}/frida/build/frida-android-arm64/lib/frida/64/frida-gadget.so.xz'
-        asset_name: 'undetected-frida-gadget-${{ needs.check_version.outputs.FRIDA_VERSION }}-android-arm64.so.xz'
+        asset_name: 'hluda-gadget-${{ needs.check_version.outputs.FRIDA_VERSION }}-android-arm64.so.xz'
         asset_content_type: application/octet-stream
    
