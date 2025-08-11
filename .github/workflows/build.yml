@@ -124,7 +124,8 @@ jobs:
         git clone --recurse-submodules https://github.com/frida/frida
         ls -lahtu
         cd "$(find -name frida-core 2>/dev/null | head -n1)"
-        git am ../../undetected-frida-patches/*.patch
+        ls -lahtu
+        git am ../undetected-frida-patches/*.patch
         cd ../
         make core-android-arm
         make core-android-arm64
