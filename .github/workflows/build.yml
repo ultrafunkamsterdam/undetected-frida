@@ -15,9 +15,9 @@ jobs:
     steps:
       - name: Pull Frida Latest Release
         id: pullFridaLatestRelease
-        uses: actions/github-script@v7
+        uses: actions/github-script@v7.0.1
         with:
-          github-token: ${{secrets.GITHUB_TOKEN}}
+          # The script to run
           script: |
             console.log(github.repos)
             const releaseResponse = await github.repos.getLatestRelease({
@@ -27,11 +27,15 @@ jobs:
             const {
               data: { tag_name: ver }
             } = releaseResponse;
-          
             core.setOutput('FRIDA_VERSION', ver);
+            
+          github-token:  ${{secrets.GITHUB_TOKEN}}
+          # Whether to tell the GitHub client to log details of its requests. true or false. Default is to run in debug mode when the GitHub Actions step debug logging is turned on.
+          
+      
       - name: Check release version
         id: checkReleaseVersion
-        uses: actions/github-script@v3.1.0
+        uses: actions/github-script@v7
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
