@@ -20,7 +20,7 @@ jobs:
           # The script to run
           script: |
             console.log(github)
-            const releaseResponse = await github.repos.getLatestRelease({
+            const releaseResponse = await github.rest.repos.getLatestRelease({
               owner: 'frida',
               repo: 'frida',
             })
@@ -41,7 +41,7 @@ jobs:
           script: |
             try {
               const releaseVersion = '${{ steps.pullFridaLatestRelease.outputs.FRIDA_VERSION }}'
-              const releaseResponse = await github.repos.getReleaseByTag({
+              const releaseResponse = await github.rest.repos.getReleaseByTag({
                 owner: '${{ secrets.GIT_OWNER }}',
                 repo: '${{ secrets.GIT_REPO }}',
                 tag: releaseVersion
@@ -131,13 +131,13 @@ jobs:
         make core-android-x86_64
     - name: Check release version
       id: checkReleaseVersion
-      uses: actions/github-script@v3.1.0
+      uses: actions/github-script@v7
       with:
         github-token: ${{secrets.GITHUB_TOKEN}}
         script: |
           try {
             const releaseVersion = '${{ needs.check_version.outputs.FRIDA_VERSION }}'
-            const releaseResponse = await github.repos.getReleaseByTag({
+            const releaseResponse = await github.rest.repos.getReleaseByTag({
               owner: '${{ secrets.GIT_OWNER }}',
               repo: '${{ secrets.GIT_REPO }}',
               tag: releaseVersion
