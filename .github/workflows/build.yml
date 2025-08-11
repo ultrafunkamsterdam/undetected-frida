@@ -7,7 +7,7 @@ on:
 
 jobs: 
   check_version:
-    runs-on: ubuntu-24.04.2
+    runs-on: ubuntu-latest
 
     outputs:
       FRIDA_VERSION: ${{ steps.pullFridaLatestRelease.outputs.FRIDA_VERSION }}
