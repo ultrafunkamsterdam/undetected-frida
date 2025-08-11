@@ -19,7 +19,7 @@ jobs:
         with:
           # The script to run
           script: |
-            console.log(github.repos)
+            console.log(github)
             const releaseResponse = await github.repos.getLatestRelease({
               owner: 'frida',
               repo: 'frida',
