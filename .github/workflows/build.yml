@@ -126,8 +126,8 @@ jobs:
         cd "$(find -name frida-core 2>/dev/null | head -n1)"
         ls -lahtu
         echo "$PWD"
-        la -lah
-        git am "$(find ../../ -name undetected-frida-patches 2>/dev/null | head -n1)/*.patch"
+        ls -lah
+        git am "$(find ../../../ -name undetected-frida-patches 2>/dev/null | head -n1)/*.patch"
         cd ../
         make core-android-arm
         make core-android-arm64
