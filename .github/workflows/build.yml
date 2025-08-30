@@ -127,7 +127,7 @@ jobs:
         ls -lahtu
         echo "$PWD"
         ls -lah
-        git am --reject --whitespace=fix ../../../undetected-frida-patches/*.patch
+        git am --reject --skip --whitespace=fix ../../../undetected-frida-patches/*.patch
         cd ../
         make core-android-arm
         make core-android-arm64
