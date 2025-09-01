@@ -129,6 +129,7 @@ jobs:
         ls -lah
         git am --reject --whitespace=fix ../../../undetected-frida-patches/*.patch
         cd ../../
+        find . -name build.py -exec echo -e "===========\ncontent of {}\n===========" \; -exec cat {} \;
         make core-android-arm || find  . -name \*.txt -o -name \*.log -exec echo -e "===========\ncontent of {}\n===========" \; -exec cat {} \;
         make core-android-arm64 || find . -name meson-log.txt -exec echo "MESON LOGS CONTENT" \; -exec cat {} \;
         make core-android-x86 
