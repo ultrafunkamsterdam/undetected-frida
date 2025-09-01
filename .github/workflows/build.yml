@@ -129,10 +129,10 @@ jobs:
         ls -lah
         git am --reject --whitespace=fix ../../../undetected-frida-patches/*.patch
         cd ../../
-        make core-android-arm
-        make core-android-arm64
-        make core-android-x86
-        make core-android-x86_64
+        make core-android-arm || find ../ -name "*[logtxt]" -exec echo -e "===========\ncontent of {}\n===========" \; -exec echo "content of {}"  \; -exec cat {} \;
+        make core-android-arm64 || find ../ -name "*[logtxt]" -exec echo -e "===========\ncontent of {}\n===========" \; -exec echo "content of {}"  \; -exec cat {} \;
+        make core-android-x86 || find ../ -name "*[logtxt]" -exec echo -e "===========\ncontent of {}\n===========" \; -exec echo "content of {}"  \; -exec cat {} \;
+        make core-android-x86_64 || find ../ -name "*[logtxt]" -exec echo -e "===========\ncontent of {}\n===========" \; -exec echo "content of {}"  \; -exec cat {} \;
     - name: Check release version
       id: checkReleaseVersion
       uses: actions/github-script@v7
