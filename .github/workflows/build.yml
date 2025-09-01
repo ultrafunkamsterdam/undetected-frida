@@ -142,15 +142,32 @@ jobs:
         git am --reject --whitespace=fix ../../../undetected-frida-patches/0007*.patch
         git am --reject --whitespace=fix ../../../undetected-frida-patches/0008*.patch
         cd ../../
+        mkdir -p out/{arm64,arm,x64} 
         ./configure --host=android-arm64 --disable-frida-tools --disable-graft-tool --enable-gadget --enable-server  --disable-frida-python
         make 
+        cp -r build/subprojects/frida-core/lib/gadget/frida-agent.so  out/arm64
+        cp -r build/subprojects/frida-core/lib/gadget/frida-gadget.so  out/arm64
+        cp -r build/subprojects/frida-core/server/frida-server out/arm64
+        cp -r build/subprojects/frida-core/inject/frida-inject out/arm64
+        
         rm -rf build
+
+
         ./configure --host=android-arm --disable-frida-tools --disable-graft-tool --enable-gadget --enable-server  --disable-frida-python
         make 
+        cp -r build/subprojects/frida-core/lib/gadget/frida-agent.so  out/arm
+        cp -r build/subprojects/frida-core/lib/gadget/frida-gadget.so  out/arm
+        cp -r build/subprojects/frida-core/server/frida-server out/arm
+        cp -r build/subprojects/frida-core/inject/frida-inject out/arm
+        
         rm -rf build
+        
         ./configure  --disable-frida-tools --disable-graft-tool --enable-gadget --enable-server  --disable-frida-python
         make
-        
+        cp -r build/subprojects/frida-core/lib/gadget/frida-agent.so  out/x64
+        cp -r build/subprojects/frida-core/lib/gadget/frida-gadget.so  out/x64
+        cp -r build/subprojects/frida-core/server/frida-server out/x64
+        cp -r build/subprojects/frida-core/inject/frida-inject out/x64
     - name: Check release version
       id: checkReleaseVersion
       uses: actions/github-script@v7
@@ -179,23 +196,32 @@ jobs:
       run: |
         pushd frida
         
-        xz build/frida-android-arm/bin/frida-server
-        xz build/frida-android-arm64/bin/frida-server
+        xz out/arm/frida-server
+        xz out/arm/frida-gadget.so
+        xz out/arm/frida-agent.so
+        xz out/arm/frida-inject 
         
-        xz build/frida-android-x86/bin/frida-server
-        xz build/frida-android-x86_64/bin/frida-server
+        xz out/arm64/frida-server
+        xz out/arm64/frida-gadget.so
+        xz out/arm64/frida-agent.so
+        xz out/arm64/frida-inject
+
+        xz out/x64/frida-server
+        xz out/x64/frida-gadget.so
+        xz out/x64/frida-agent.so
+        xz out/x64/frida-inject
+      
+        # xz out/arm64/build/frida-android-arm/bin/frida-inject
+        # xz build/frida-android-arm64/bin/frida-inject
         
-        xz build/frida-android-arm/bin/frida-inject
-        xz build/frida-android-arm64/bin/frida-inject
+        # xz build/frida-android-x86/bin/frida-inject
+        # xz build/frida-android-x86_64/bin/frida-inject
         
-        xz build/frida-android-x86/bin/frida-inject
-        xz build/frida-android-x86_64/bin/frida-inject
+        # xz build/frida-android-arm/lib/frida/32/frida-gadget.so
+        # xz build/frida-android-arm64/lib/frida/64/frida-gadget.so
         
-        xz build/frida-android-arm/lib/frida/32/frida-gadget.so
-        xz build/frida-android-arm64/lib/frida/64/frida-gadget.so
-        
-        xz build/frida-android-x86/lib/frida/32/frida-gadget.so
-        xz build/frida-android-x86_64/lib/frida/64/frida-gadget.so
+        # xz build/frida-android-x86/lib/frida/32/frida-gadget.so
+        # xz build/frida-android-x86_64/lib/frida/64/frida-gadget.so
         
         popd
         
@@ -205,7 +231,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: '${{ steps.checkReleaseVersion.outputs.upload_url }}'
-        asset_path: '${{ github.workspace }}/frida/build/frida-android-arm/bin/frida-server.xz'
+        asset_path: '${{ github.workspace }}/frida/out/arm/frida-server.xz'
         asset_name: 'undetected-frida-server-${{ needs.check_version.outputs.FRIDA_VERSION }}-android-arm.xz'
         asset_content_type: application/octet-stream
 
@@ -215,19 +241,10 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: '${{ steps.checkReleaseVersion.outputs.upload_url }}'
-        asset_path: '${{ github.workspace }}/frida/build/frida-android-arm64/bin/frida-server.xz'
+        asset_path: '${{ github.workspace }}/frida/out/arm64/frida-server.xz'
         asset_name: 'undetected-frida-server-${{ needs.check_version.outputs.FRIDA_VERSION }}-android-arm64.xz'
         asset_content_type: application/octet-stream
 
-    - name: Upload android x86 frida-server for Undetected-Frida
-      uses: actions/upload-release-asset@v1.0.2
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: '${{ steps.checkReleaseVersion.outputs.upload_url }}'
-        asset_path: '${{ github.workspace }}/frida/build/frida-android-x86/bin/frida-server.xz'
-        asset_name: 'undetected-frida-server-${{ needs.check_version.outputs.FRIDA_VERSION }}-android-x86.xz'
-        asset_content_type: application/octet-stream
 
     - name: Upload android x86_64 frida-server for Undetected-Frida
       uses: actions/upload-release-asset@v1.0.2
@@ -235,8 +252,8 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: '${{ steps.checkReleaseVersion.outputs.upload_url }}'
-        asset_path: '${{ github.workspace }}/frida/build/frida-android-x86_64/bin/frida-server.xz'
-        asset_name: 'undetected-frida-server-${{ needs.check_version.outputs.FRIDA_VERSION }}-android-x86_64.xz'
+        asset_path: '${{ github.workspace }}/frida/out/x64/frida-server.xz'
+        asset_name: 'undetected-frida-server-${{ needs.check_version.outputs.FRIDA_VERSION }}-android-x64.xz'
         asset_content_type: application/octet-stream
         
     - name: Upload android arm frida-inject for Undetected-Frida
@@ -245,7 +262,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: '${{ steps.checkReleaseVersion.outputs.upload_url }}'
-        asset_path: '${{ github.workspace }}/frida/build/frida-android-arm/bin/frida-inject.xz'
+        asset_path: '${{ github.workspace }}/frida/out/arm/frida-inject.xz'
         asset_name: 'undetected-frida-inject-${{ needs.check_version.outputs.FRIDA_VERSION }}-android-arm.xz'
         asset_content_type: application/octet-stream
         
@@ -255,47 +272,61 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: '${{ steps.checkReleaseVersion.outputs.upload_url }}'
-        asset_path: '${{ github.workspace }}/frida/build/frida-android-arm64/bin/frida-inject.xz'
+        asset_path: '${{ github.workspace }}/frida/out/arm64/frida-inject.xz'
         asset_name: 'undetected-frida-inject-${{ needs.check_version.outputs.FRIDA_VERSION }}-android-arm64.xz'
         asset_content_type: application/octet-stream
-        
-    - name: Upload android x86 frida-inject for Undetected-Frida
+
+
+    - name: Upload android x64 frida-inject for Undetected-Frida
       uses: actions/upload-release-asset@v1.0.2
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: '${{ steps.checkReleaseVersion.outputs.upload_url }}'
-        asset_path: '${{ github.workspace }}/frida/build/frida-android-x86/bin/frida-inject.xz'
+        asset_path: '${{ github.workspace }}/frida/out/x64/frida-inject.xz'
+        asset_name: 'undetected-frida-inject-${{ needs.check_version.outputs.FRIDA_VERSION }}-android-x64.xz'
+        asset_content_type: application/octet-stream
+        
+        
+    - name: Upload android x86 frida-gadget for Undetected-Frida
+      uses: actions/upload-release-asset@v1.0.2
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: '${{ steps.checkReleaseVersion.outputs.upload_url }}'
+        asset_path: '${{ github.workspace }}/frida/out/x64/frida-gadget.so.xz'
         asset_name: 'undetected-frida-inject-${{ needs.check_version.outputs.FRIDA_VERSION }}-android-x86.xz'
         asset_content_type: application/octet-stream
-        
-    - name: Upload android x86_64 frida-inject for Undetected-Frida
-      uses: actions/upload-release-asset@v1.0.2
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: '${{ steps.checkReleaseVersion.outputs.upload_url }}'
-        asset_path: '${{ github.workspace }}/frida/build/frida-android-x86_64/bin/frida-inject.xz'
-        asset_name: 'undetected-frida-inject-${{ needs.check_version.outputs.FRIDA_VERSION }}-android-arm-x86_64.xz'
-        asset_content_type: application/octet-stream
-    
+
     - name: Upload android arm frida-gadget for Undetected-Frida
       uses: actions/upload-release-asset@v1.0.2
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: '${{ steps.checkReleaseVersion.outputs.upload_url }}'
-        asset_path: '${{ github.workspace }}/frida/build/frida-android-arm/lib/frida/32/frida-gadget.so.xz'
-        asset_name: 'undetected-frida-gadget-${{ needs.check_version.outputs.FRIDA_VERSION }}-android-arm.so.xz'
+        asset_path: '${{ github.workspace }}/frida/out/arm/frida-gadget.so.xz'
+        asset_name: 'undetected-frida-inject-${{ needs.check_version.outputs.FRIDA_VERSION }}-android-arm.xz'
         asset_content_type: application/octet-stream
 
+      
     - name: Upload android arm64 frida-gadget for Undetected-Frida
       uses: actions/upload-release-asset@v1.0.2
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: '${{ steps.checkReleaseVersion.outputs.upload_url }}'
-        asset_path: '${{ github.workspace }}/frida/build/frida-android-arm64/lib/frida/64/frida-gadget.so.xz'
-        asset_name: 'undetected-frida-gadget-${{ needs.check_version.outputs.FRIDA_VERSION }}-android-arm64.so.xz'
+        asset_path: '${{ github.workspace }}/frida/out/arm64/frida-gadget.so.xz'
+        asset_name: 'undetected-frida-inject-${{ needs.check_version.outputs.FRIDA_VERSION }}-android-arm64.xz'
         asset_content_type: application/octet-stream
+    # - name: Upload android x86_64 frida-inject for Undetected-Frida
+    #   uses: actions/upload-release-asset@v1.0.2
+    #   env:
+    #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    #   with:
+    #     upload_url: '${{ steps.checkReleaseVersion.outputs.upload_url }}'
+    #     asset_path: '${{ github.workspace }}/frida/build/frida-android-x86_64/bin/frida-inject.xz'
+    #     asset_name: 'undetected-frida-inject-${{ needs.check_version.outputs.FRIDA_VERSION }}-android-arm-x86_64.xz'
+    #     asset_content_type: application/octet-stream
+    
+  
    
