@@ -129,10 +129,10 @@ jobs:
         ls -lah
         git am --reject --whitespace=fix ../../../undetected-frida-patches/*.patch
         cd ../../
-        make core-android-arm || find  . -name \*.txt -o -name \*.log -exec echo -e "===========\ncontent of {}\n===========" \; --exec cat {} \;
-        make core-android-arm64 || find . -name \*.txt -o -name \*.log -exec echo -e "===========\ncontent of {}\n===========" \;  -exec cat {} \;
-        make core-android-x86 || find . -name \*.txt -o -name \*.log  -exec echo -e "===========\ncontent of {}\n===========" \;  -exec cat {} \;
-        make core-android-x86_64 || find . -name \*.txt -o -name \*.log  -exec echo -e "===========\n\ncontent of {}\n===========" \; -exec cat {} \;
+        make core-android-arm || find  . -name \*.txt -o -name \*.log -exec echo -e "===========\ncontent of {}\n===========" \; -exec cat {} \;
+        make core-android-arm64 || find . -name meson-log.txt -exec echo "MESON LOGS CONTENT" \; -exec cat {} \;
+        make core-android-x86 
+        make core-android-x86_64 
     - name: Check release version
       id: checkReleaseVersion
       uses: actions/github-script@v7
