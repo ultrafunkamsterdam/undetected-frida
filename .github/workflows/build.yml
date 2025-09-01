@@ -116,7 +116,7 @@ jobs:
         zlib1g libicu-dev uuid-dev unzip tree ninja-build gcc-multilib g++-multilib lib32stdc++-9-dev flex bison xz-utils ruby ruby-dev \
         gobject-introspection gobject-introspection-bin python3-gi ruby-gobject-introspection \
         libgirepository-2.0-0 libgirepository-2.0-dev libgirepository1.0-dev libgirepository-1.0-1 \
-        build-essential git lib32stdc++-9-dev libc6-dev-i386 libc6-dev libc6-dev-i386 python3-requests python3-setuptools python3-pip libc6-dev libc6-dev-i386 
+        build-essential git lib32stdc++-9-dev libc6-dev-i386 libc6-dev libc6-dev-i386 cmake python3-requests python3-setuptools python3-pip libc6-dev libc6-dev-i386 
         sudo gem install fpm -v 1.11.0 --no-document
         python3 -m pip install lief graphlib
     - name: build frida for Android
@@ -135,9 +135,8 @@ jobs:
         git am --reject --whitespace=fix ../../../undetected-frida-patches/*.patch
         cd ../../
         ./configure --disable-frida-tools --disable-graft-tool --enable-gadget --enable-server  --disable-frida-python
-        find . -name build.py -exec echo -e "===========\ncontent of {}\n===========" \; -exec cat {} \;
-        make core-android-arm || find  . -name \*.txt -o -name \*.log -exec echo -e "===========\ncontent of {}\n===========" \; -exec cat {} \;
-        make core-android-arm64 || find . -name meson-log.txt -exec echo "MESON LOGS CONTENT" \; -exec cat {} \;
+        make core-android-arm 
+        make core-android-arm64
         make core-android-x86 
         make core-android-x86_64 
     - name: Check release version
