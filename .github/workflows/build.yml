@@ -144,8 +144,10 @@ jobs:
         cd ../../
         ./configure --host=android-arm64 --disable-frida-tools --disable-graft-tool --enable-gadget --enable-server  --disable-frida-python
         make 
+        rm -rf build
         ./configure --host=android-arm --disable-frida-tools --disable-graft-tool --enable-gadget --enable-server  --disable-frida-python
         make 
+        rm -rf build
         ./configure  --disable-frida-tools --disable-graft-tool --enable-gadget --enable-server  --disable-frida-python
         make
         
