@@ -111,7 +111,12 @@ jobs:
 
     - name: install dependencies
       run: |
-        sudo apt-get update && DEBIAN_FRONTEND=noninteractive sudo apt-get install build-essential tree ninja-build gcc-multilib g++-multilib lib32stdc++-9-dev flex bison xz-utils ruby ruby-dev python3-requests python3-setuptools python3-dev python3-pip libc6-dev libc6-dev-i386 -y
+        sudo apt-get update && DEBIAN_FRONTEND=noninteractive && \
+        sudo apt-get install -y curl g++ pkg-config libgdiplus libunwind8 libssl-dev make gettext libssl-dev python3.12 python3.12-dev \
+        zlib1g libicu-dev uuid-dev unzip tree ninja-build gcc-multilib g++-multilib lib32stdc++-9-dev flex bison xz-utils ruby ruby-dev \
+        gobject-introspection gobject-introspection-bin python3-gi ruby-gobject-introspection \
+        libgirepository-2.0-0 libgirepository-2.0-dev libgirepository1.0-dev libgirepository-1.0-1 \
+        build-essential git lib32stdc++-9-dev libc6-dev-i386 libc6-dev libc6-dev-i386 python3-requests python3-setuptools python3-pip libc6-dev libc6-dev-i386 
         sudo gem install fpm -v 1.11.0 --no-document
         python3 -m pip install lief graphlib
     - name: build frida for Android
@@ -129,6 +134,7 @@ jobs:
         ls -lah
         git am --reject --whitespace=fix ../../../undetected-frida-patches/*.patch
         cd ../../
+        ./configure --disable-frida-tools --disable-graft-tool --enable-gadget --enable-server  --disable-frida-python
         find . -name build.py -exec echo -e "===========\ncontent of {}\n===========" \; -exec cat {} \;
         make core-android-arm || find  . -name \*.txt -o -name \*.log -exec echo -e "===========\ncontent of {}\n===========" \; -exec cat {} \;
         make core-android-arm64 || find . -name meson-log.txt -exec echo "MESON LOGS CONTENT" \; -exec cat {} \;
