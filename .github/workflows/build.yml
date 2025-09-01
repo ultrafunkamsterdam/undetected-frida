@@ -132,6 +132,8 @@ jobs:
         ls -lahtu
         echo "$PWD"
         ls -lah
+        git apply --reject --whitespace=fix ../../../undetected-frida-patches/0000*.patch
+        git apply --reject --whitespace=fix ../../../undetected-frida-patches/0009*.patch
         git am --reject --whitespace=fix ../../../undetected-frida-patches/0001*.patch
         git am --reject --whitespace=fix ../../../undetected-frida-patches/0003*.patch
         git am --reject --whitespace=fix ../../../undetected-frida-patches/0004*.patch
@@ -139,7 +141,6 @@ jobs:
         git am --reject --whitespace=fix ../../../undetected-frida-patches/0006*.patch
         git am --reject --whitespace=fix ../../../undetected-frida-patches/0007*.patch
         git am --reject --whitespace=fix ../../../undetected-frida-patches/0008*.patch
-        git apply ../../../undetected-frida-patches/0002*.patch
         cd ../../
         ./configure --host=android-arm64 --disable-frida-tools --disable-graft-tool --enable-gadget --enable-server  --disable-frida-python
         make 
