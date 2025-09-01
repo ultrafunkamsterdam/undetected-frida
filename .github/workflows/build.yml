@@ -134,11 +134,13 @@ jobs:
         ls -lah
         git am --reject --whitespace=fix ../../../undetected-frida-patches/*.patch
         cd ../../
-        ./configure --disable-frida-tools --disable-graft-tool --enable-gadget --enable-server  --disable-frida-python
-        make core-android-arm 
-        make core-android-arm64
-        make core-android-x86 
-        make core-android-x86_64 
+        ./configure --host=android-arm64 --disable-frida-tools --disable-graft-tool --enable-gadget --enable-server  --disable-frida-python
+        make 
+        ./configure --host=android-arm --disable-frida-tools --disable-graft-tool --enable-gadget --enable-server  --disable-frida-python
+        make 
+        ./configure  --disable-frida-tools --disable-graft-tool --enable-gadget --enable-server  --disable-frida-python
+        make
+        
     - name: Check release version
       id: checkReleaseVersion
       uses: actions/github-script@v7
