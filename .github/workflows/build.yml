@@ -163,16 +163,16 @@ jobs:
         ./configure --host=android-arm --disable-frida-tools --disable-graft-tool --enable-gadget --enable-server  --disable-frida-python
         make 
         gadget=$(find build/subprojects -name frida-gadget.so  | head -n 1) ;
-        if [ -n $gadget ]; then cp -r $gadget out/arm; fi  
+        if [ -n $gadget ]; then cp ${gadget} out/arm 2>/dev/null; fi  
         
         agent=$(find build/subprojects -name frida-agent.so  | head -n 1) ;
-        if [ -n $agent ]; then cp -r $agent out/arm; fi 
+        if [ -n $agent ]; then cp  ${agent} out/arm 2>/dev/null; fi 
 
         server=$(find build/subprojects -type f -name frida-server  | head -n 1);
-        if [ -n $server ]; then cp -r $server out/arm; fi 
+        if [ -n $server ]; then cp ${server} out/arm 2>/dev/null; fi 
 
         inject=$(find build/subprojects -type f -name frida-inject  | head -n 1);
-        if [ -n $inject ]; then cp -r $inject out/arm; fi 
+        if [ -n $inject ]; then cp ${inject} out/arm 2>/dev/null; fi 
         rm -rf build
         
         ./configure  --disable-frida-tools --disable-graft-tool --enable-gadget --enable-server  --disable-frida-python
