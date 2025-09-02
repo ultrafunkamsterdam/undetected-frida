@@ -238,8 +238,9 @@ jobs:
         # xz build/frida-android-x86_64/lib/frida/64/frida-gadget.so
         
         popd
+  
   create_release:
-    needs: [check_version, android_build],
+    needs: [check_version, android_build]
     runs-on: ubuntu-latest
     if: needs.check_version.outputs.ALREADY_RELEASE == '0'
 
