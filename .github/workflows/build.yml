@@ -145,7 +145,7 @@ jobs:
         mkdir -p out/{arm64,arm,x64} 
         ./configure --host=android-arm64 --disable-frida-tools --disable-graft-tool --enable-gadget --enable-server  --disable-frida-python
         make 
-        cp -r build/subprojects/frida-core/lib/gadget/frida-agent.so  out/arm64
+        cp -r build/subprojects/frida-core/lib/gadget/frida-gadget.so  out/arm64
         cp -r build/subprojects/frida-core/lib/gadget/frida-gadget.so  out/arm64
         cp -r build/subprojects/frida-core/server/frida-server out/arm64
         cp -r build/subprojects/frida-core/inject/frida-inject out/arm64
@@ -155,8 +155,8 @@ jobs:
 
         ./configure --host=android-arm --disable-frida-tools --disable-graft-tool --enable-gadget --enable-server  --disable-frida-python
         make 
-        cp -r build/subprojects/frida-core/lib/gadget/frida-agent.so  out/arm
         cp -r build/subprojects/frida-core/lib/gadget/frida-gadget.so  out/arm
+        cp -r build/subprojects/frida-core/lib/agent/frida-agent.so out/arm
         cp -r build/subprojects/frida-core/server/frida-server out/arm
         cp -r build/subprojects/frida-core/inject/frida-inject out/arm
         
