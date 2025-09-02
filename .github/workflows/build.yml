@@ -164,8 +164,8 @@ jobs:
         
         ./configure  --disable-frida-tools --disable-graft-tool --enable-gadget --enable-server  --disable-frida-python
         make
-        cp -r build/subprojects/frida-core/lib/gadget/frida-agent.so  out/x64
         cp -r build/subprojects/frida-core/lib/gadget/frida-gadget.so  out/x64
+        cp -r build/subprojects/frida-core/lib/agent/frida-agent.so  out/x64
         cp -r build/subprojects/frida-core/server/frida-server out/x64
         cp -r build/subprojects/frida-core/inject/frida-inject out/x64
     - name: Check release version
