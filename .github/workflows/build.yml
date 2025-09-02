@@ -179,18 +179,18 @@ jobs:
         make
         
         gadget=$(find build/subprojects -name frida-gadget.so | head -n 1) ;
-        if [ -n $gadget ]; then cp -r $gadget out/x64; fi  
+        if [ -n $gadget ]; then cp ${gadget} out/x64 2>/dev/null; fi  
         
         agent=$(find build/subprojects -name frida-agent.so | head -n 1) ;
-        if [ -n $agent ]; then cp -r $agent out/x64 ; fi 
+        if [ -n $agent ]; then cp  ${agent} out/x64 2>/dev/null; fi 
 
         server=$(find build/subprojects -type f -name frida-server  | head -n 1);
-        if [ -n $server ]; then cp -r $server out/x64; fi 
+        if [ -n $server ]; then cp  ${server} out/x64 2>/dev/null; fi 
 
         inject=$(find build/subprojects -type f -name frida-inject  | head -n 1);
-        if [ -n $inject ]; then cp -r $inject out/x64; fi 
+        if [ -n $inject ]; then cp -r ${inject} out/x64 2>/dev/null; fi 
          
-         rm -rf build
+        rm -rf build
          
     - name: Check release version
       id: checkReleaseVersion
