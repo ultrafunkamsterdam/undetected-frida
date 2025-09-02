@@ -143,6 +143,7 @@ jobs:
         git am --reject --whitespace=fix ../../../undetected-frida-patches/0008*.patch
         cd ../../
         mkdir -p out/{arm64,arm,x64} 
+        
         ./configure --host=android-arm64 --disable-frida-tools --disable-graft-tool --enable-gadget --enable-server  --disable-frida-python
         make 
         
@@ -175,7 +176,7 @@ jobs:
         if [ -n $inject ]; then cp ${inject} out/arm 2>/dev/null; fi 
         rm -rf build
         
-        ./configure  --disable-frida-tools --disable-graft-tool --enable-gadget --enable-server  --disable-frida-python
+        ./configure --host=android-x86_64  --disable-frida-tools --disable-graft-tool --enable-gadget --enable-server  --disable-frida-python
         make
         
         gadget=$(find build/subprojects -name frida-gadget.so | head -n 1) ;
