@@ -276,6 +276,29 @@ jobs:
                 core.setFailed(e.message);
               }
             }
+      - name: Check release version
+        id: checkReleaseVersion2
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{secrets.GITHUB_TOKEN}}
+          script: |
+            try {
+            const releaseVersion = '${{ needs.check_version.outputs.FRIDA_VERSION }}'
+            const releaseResponse = await github.rest.repos.getReleaseByTag({
+              owner: '${{ secrets.GIT_OWNER }}',
+              repo: '${{ secrets.GIT_REPO }}',
+              tag: releaseVersion
+            })
+            const {
+              data: { id: releaseId, html_url: htmlUrl, upload_url: uploadUrl }
+            } = releaseResponse;
+            core.setOutput('id', releaseId);
+            core.setOutput('html_url', htmlUrl);
+            core.setOutput('upload_url', uploadUrl);
+            core.setOutput('version', releaseVersion);
+            } catch (e) {
+            core.setFailed(e.message);
+            }
       - uses: actions/create-release@master
         id: createRelease
         name: Create Runner Release
@@ -292,7 +315,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: '${{ steps.checkReleaseVersion.outputs.upload_url }}'
+          upload_url: '${{ steps.checkReleaseVersion2.outputs.upload_url }}'
           asset_path: '${{ github.workspace }}/frida/out/arm/frida-server.xz'
           asset_name: 'undetected-frida-server-${{ needs.check_version.outputs.FRIDA_VERSION }}-android-arm.xz'
           asset_content_type: application/octet-stream
@@ -302,7 +325,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: '${{ steps.checkReleaseVersion.outputs.upload_url }}'
+          upload_url: '${{ steps.checkReleaseVersion2.outputs.upload_url }}'
           asset_path: '${{ github.workspace }}/frida/out/arm64/frida-server.xz'
           asset_name: 'undetected-frida-server-${{ needs.check_version.outputs.FRIDA_VERSION }}-android-arm64.xz'
           asset_content_type: application/octet-stream
@@ -313,7 +336,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: '${{ steps.checkReleaseVersion.outputs.upload_url }}'
+          upload_url: '${{ steps.checkReleaseVersion2.outputs.upload_url }}'
           asset_path: '${{ github.workspace }}/frida/out/x64/frida-server.xz'
           asset_name: 'undetected-frida-server-${{ needs.check_version.outputs.FRIDA_VERSION }}-android-x86_64.xz'
           asset_content_type: application/octet-stream
@@ -323,7 +346,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: '${{ steps.checkReleaseVersion.outputs.upload_url }}'
+          upload_url: '${{ steps.checkReleaseVersion2.outputs.upload_url }}'
           asset_path: '${{ github.workspace }}/frida/out/arm/frida-inject.xz'
           asset_name: 'undetected-frida-inject-${{ needs.check_version.outputs.FRIDA_VERSION }}-android-arm.xz'
           asset_content_type: application/octet-stream
@@ -333,7 +356,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: '${{ steps.checkReleaseVersion.outputs.upload_url }}'
+          upload_url: '${{ steps.checkReleaseVersion2.outputs.upload_url }}'
           asset_path: '${{ github.workspace }}/frida/out/arm64/frida-inject.xz'
           asset_name: 'undetected-frida-inject-${{ needs.check_version.outputs.FRIDA_VERSION }}-android-arm64.xz'
           asset_content_type: application/octet-stream
@@ -344,7 +367,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: '${{ steps.checkReleaseVersion.outputs.upload_url }}'
+          upload_url: '${{ steps.checkReleaseVersion2.outputs.upload_url }}'
           asset_path: '${{ github.workspace }}/frida/out/x64/frida-inject.xz'
           asset_name: 'undetected-frida-inject-${{ needs.check_version.outputs.FRIDA_VERSION }}-android-x86_64.xz'
           asset_content_type: application/octet-stream
@@ -355,7 +378,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: '${{ steps.checkReleaseVersion.outputs.upload_url }}'
+          upload_url: '${{ steps.checkReleaseVersion2.outputs.upload_url }}'
           asset_path: '${{ github.workspace }}/frida/out/x64/frida-gadget.so.xz'
           asset_name: 'undetected-frida-gadget-${{ needs.check_version.outputs.FRIDA_VERSION }}-android-x86_64.xz'
           asset_content_type: application/octet-stream
@@ -365,7 +388,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: '${{ steps.checkReleaseVersion.outputs.upload_url }}'
+          upload_url: '${{ steps.checkReleaseVersion2.outputs.upload_url }}'
           asset_path: '${{ github.workspace }}/frida/out/arm/frida-gadget.so.xz'
           asset_name: 'undetected-frida-gadget-${{ needs.check_version.outputs.FRIDA_VERSION }}-android-arm.xz'
           asset_content_type: application/octet-stream
@@ -376,7 +399,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: '${{ steps.checkReleaseVersion.outputs.upload_url }}'
+          upload_url: '${{ steps.checkReleaseVersion2.outputs.upload_url }}'
           asset_path: '${{ github.workspace }}/frida/out/arm64/frida-gadget.so.xz'
           asset_name: 'undetected-frida-gadget-${{ needs.check_version.outputs.FRIDA_VERSION }}-android-arm64.xz'
           asset_content_type: application/octet-stream
