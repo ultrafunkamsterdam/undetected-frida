@@ -145,29 +145,53 @@ jobs:
         mkdir -p out/{arm64,arm,x64} 
         ./configure --host=android-arm64 --disable-frida-tools --disable-graft-tool --enable-gadget --enable-server  --disable-frida-python
         make 
-        cp -r build/subprojects/frida-core/lib/gadget/frida-gadget.so  out/arm64
-        cp -r build/subprojects/frida-core/lib/gadget/frida-gadget.so  out/arm64
-        cp -r build/subprojects/frida-core/server/frida-server out/arm64
-        cp -r build/subprojects/frida-core/inject/frida-inject out/arm64
+        
+        gadget=$(find build/subprojects -name frida-gadget.so) ;
+        if [ -n $gadget ]; then cp -r $gadget out/arm64; fi  
+        
+        agent=$(find build/subprojects -name frida-agent.so) ;
+        if [ -n $agent ]; then cp -r $agent out/arm64; fi 
+
+        server=$(find build/subprojects -type f -name frida-server);
+        if [ -n $server ]; then cp -r $server out/arm64; fi 
+
+        inject=$(find build/subprojects -type f -name frida-inject);
+        if [ -n $inject ]; then cp -r $inject out/arm64; fi 
         
         rm -rf build
 
-
         ./configure --host=android-arm --disable-frida-tools --disable-graft-tool --enable-gadget --enable-server  --disable-frida-python
         make 
-        cp -r build/subprojects/frida-core/lib/gadget/frida-gadget.so  out/arm
-        cp -r build/subprojects/frida-core/lib/agent/frida-agent.so out/arm
-        cp -r build/subprojects/frida-core/server/frida-server out/arm
-        cp -r build/subprojects/frida-core/inject/frida-inject out/arm
+        gadget=$(find build/subprojects -name frida-gadget.so) ;
+        if [ -n $gadget ]; then cp -r $gadget out/arm; fi  
+        
+        agent=$(find build/subprojects -name frida-agent.so) ;
+        if [ -n $agent ]; then cp -r $agent out/arm; fi 
+
+        server=$(find build/subprojects -type f -name frida-server);
+        if [ -n $server ]; then cp -r $server out/arm; fi 
+
+        inject=$(find build/subprojects -type f -name frida-inject);
+        if [ -n $inject ]; then cp -r $inject out/arm; fi 
+
         
         rm -rf build
         
         ./configure  --disable-frida-tools --disable-graft-tool --enable-gadget --enable-server  --disable-frida-python
         make
-        cp -r build/subprojects/frida-core/lib/gadget/frida-gadget.so  out/x64
-        cp -r build/subprojects/frida-core/lib/agent/frida-agent.so  out/x64
-        cp -r build/subprojects/frida-core/server/frida-server out/x64
-        cp -r build/subprojects/frida-core/inject/frida-inject out/x64
+        
+        gadget=$(find build/subprojects -name frida-gadget.so) ;
+        if [ -n $gadget ]; then cp -r $gadget out/x64; fi  
+        
+        agent=$(find build/subprojects -name frida-agent.so) ;
+        if [ -n $agent ]; then cp -r $agent out/x64; fi 
+
+        server=$(find build/subprojects -type f -name frida-server);
+        if [ -n $server ]; then cp -r $server out/x64; fi 
+
+        inject=$(find build/subprojects -type f -name frida-inject);
+        if [ -n $inject ]; then cp -r $inject out/x64; fi 
+
     - name: Check release version
       id: checkReleaseVersion
       uses: actions/github-script@v7
@@ -194,23 +218,48 @@ jobs:
     - name: package build result for Android
       shell: bash
       run: |
-        pushd frida
-        
-        xz out/arm/frida-server
-        xz out/arm/frida-gadget.so
-        xz out/arm/frida-agent.so
-        xz out/arm/frida-inject 
-        
-        xz out/arm64/frida-server
-        xz out/arm64/frida-gadget.so
-        xz out/arm64/frida-agent.so
-        xz out/arm64/frida-inject
+        pushd $(find . -type d frida)
+        if [ -e out/arm/frida-server ]; then
+          xz out/arm/frida-server ;
+        fi
+        if [ -e out/arm/frida-gadget.so ]; then
+          xz out/arm/frida-gadget.so ;
+        fi
+        if [ -e out/arm/frida-agent.so ]; then
+          xz out/arm/frida-agent.so
+        fi
+        if [ -e out/arm/frida-inject ] ; then 
+          xz out/arm/frida-inject ;
+        fi
 
-        xz out/x64/frida-server
-        xz out/x64/frida-gadget.so
-        xz out/x64/frida-agent.so
-        xz out/x64/frida-inject
-      
+        if [ -e out/arm64/frida-server ]; then
+          xz out/arm64/frida-server ;
+        fi
+        if [ -e out/arm64/frida-gadget.so ]; then
+          xz out/arm64/frida-gadget.so ;
+        fi
+        if [ -e out/arm64/frida-agent.so ]; then
+          xz out/arm64/frida-agent.so
+        fi
+        if [ -e out/arm64/frida-inject ] ; then 
+          xz out/arm64/frida-inject ;
+        fi
+
+        if [ -e out/x64/frida-server ]; then
+          xz out/x64/frida-server ;
+        fi
+        if [ -e out/x64/frida-gadget.so ]; then
+          xz out/x64/frida-gadget.so ;
+        fi
+        if [ -e out/x64/frida-agent.so ]; then
+           xz out/x64/frida-agent.so
+        fi
+        if [ -e out/x64/frida-inject ] ; then 
+          xz out/x64/frida-inject ;
+        fi
+        
+
+    
         # xz out/arm64/build/frida-android-arm/bin/frida-inject
         # xz build/frida-android-arm64/bin/frida-inject
         
