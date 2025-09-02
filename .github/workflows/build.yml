@@ -220,6 +220,7 @@ jobs:
       shell: bash
       run: |
         pushd $(find ../ -type d -name "frida" | head -n 1)
+        
         if [ -e out/arm/frida-server ]; then
           xz out/arm/frida-server ;
         fi
@@ -303,7 +304,7 @@ jobs:
       with:
         upload_url: '${{ steps.checkReleaseVersion.outputs.upload_url }}'
         asset_path: '${{ github.workspace }}/frida/out/x64/frida-server.xz'
-        asset_name: 'undetected-frida-server-${{ needs.check_version.outputs.FRIDA_VERSION }}-android-x64.xz'
+        asset_name: 'undetected-frida-server-${{ needs.check_version.outputs.FRIDA_VERSION }}-android-x86_64.xz'
         asset_content_type: application/octet-stream
         
     - name: Upload android arm frida-inject for Undetected-Frida
@@ -334,7 +335,7 @@ jobs:
       with:
         upload_url: '${{ steps.checkReleaseVersion.outputs.upload_url }}'
         asset_path: '${{ github.workspace }}/frida/out/x64/frida-inject.xz'
-        asset_name: 'undetected-frida-inject-${{ needs.check_version.outputs.FRIDA_VERSION }}-android-x64.xz'
+        asset_name: 'undetected-frida-inject-${{ needs.check_version.outputs.FRIDA_VERSION }}-android-x86_64.xz'
         asset_content_type: application/octet-stream
         
         
@@ -345,7 +346,7 @@ jobs:
       with:
         upload_url: '${{ steps.checkReleaseVersion.outputs.upload_url }}'
         asset_path: '${{ github.workspace }}/frida/out/x64/frida-gadget.so.xz'
-        asset_name: 'undetected-frida-inject-${{ needs.check_version.outputs.FRIDA_VERSION }}-android-x86.xz'
+        asset_name: 'undetected-frida-gadget-${{ needs.check_version.outputs.FRIDA_VERSION }}-android-x86_64.xz'
         asset_content_type: application/octet-stream
 
     - name: Upload android arm frida-gadget for Undetected-Frida
@@ -355,7 +356,7 @@ jobs:
       with:
         upload_url: '${{ steps.checkReleaseVersion.outputs.upload_url }}'
         asset_path: '${{ github.workspace }}/frida/out/arm/frida-gadget.so.xz'
-        asset_name: 'undetected-frida-inject-${{ needs.check_version.outputs.FRIDA_VERSION }}-android-arm.xz'
+        asset_name: 'undetected-frida-gadget-${{ needs.check_version.outputs.FRIDA_VERSION }}-android-arm.xz'
         asset_content_type: application/octet-stream
 
       
@@ -366,7 +367,7 @@ jobs:
       with:
         upload_url: '${{ steps.checkReleaseVersion.outputs.upload_url }}'
         asset_path: '${{ github.workspace }}/frida/out/arm64/frida-gadget.so.xz'
-        asset_name: 'undetected-frida-inject-${{ needs.check_version.outputs.FRIDA_VERSION }}-android-arm64.xz'
+        asset_name: 'undetected-frida-gadget-${{ needs.check_version.outputs.FRIDA_VERSION }}-android-arm64.xz'
         asset_content_type: application/octet-stream
     # - name: Upload android x86_64 frida-inject for Undetected-Frida
     #   uses: actions/upload-release-asset@v1.0.2
