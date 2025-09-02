@@ -1,4 +1,4 @@
-name: Undetected-Frida
+name: Undetected-Frida dev
 
 on:
   schedule:
