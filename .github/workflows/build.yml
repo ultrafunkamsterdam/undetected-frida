@@ -219,7 +219,7 @@ jobs:
     - name: package build result for Android
       shell: bash
       run: |
-        pushd $(find . -type d frida)
+        pushd $(find ../ -type d -name "frida" | head -n 1)
         if [ -e out/arm/frida-server ]; then
           xz out/arm/frida-server ;
         fi
