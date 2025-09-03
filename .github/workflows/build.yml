@@ -129,9 +129,9 @@ jobs:
         git clone --recurse-submodules https://github.com/frida/frida
         ls -lahtu
         cd "$(find -name frida-core 2>/dev/null | head -n1)"
-        ls -lahtu
-        echo "$PWD"
-        ls -lah
+        
+        echo "current dir: $PWD"
+       
         git apply --reject --whitespace=fix ../../../undetected-frida-patches/0000*.patch
         git apply --reject --whitespace=fix ../../../undetected-frida-patches/0009*.patch
         git am --reject --whitespace=fix ../../../undetected-frida-patches/0001*.patch
@@ -142,56 +142,26 @@ jobs:
         git am --reject --whitespace=fix ../../../undetected-frida-patches/0007*.patch
         git am --reject --whitespace=fix ../../../undetected-frida-patches/0008*.patch
         cd ../../
-        mkdir -p out/{arm64,arm,x64} 
         
-        ./configure --host=android-arm64 --disable-frida-tools --disable-graft-tool --enable-gadget --enable-server  --disable-frida-python
-        make 
-        
-        gadget=$(find build/subprojects -name frida-gadget.so  | head -n 1) ;
-        if [ -n $gadget ]; then cp -r $gadget out/arm64; fi  
-        
-        agent=$(find build/subprojects -name frida-agent.so  | head -n 1) ;
-        if [ -n $agent ]; then cp -r $agent out/arm64; fi 
+        ARCHS=("android-arm" "android-arm64" "android-x86_64")
+        for ARCH in ${ARCHS[@]}
+        do
+           mkdir build-$ARCH
+           cd build-$ARCH
+           ../configure --host=$ARCH --disable-frida-tools --disable-graft-tool --enable-gadget --enable-server  --disable-frida-python
+           make
+           cd ..
+        done 
 
-        server=$(find build/subprojects -type f -name frida-server  | head -n 1);
-        if [ -n $server ]; then cp -r $server out/arm64; fi 
-
-        inject=$(find build/subprojects -type f -name frida-inject  | head -n 1) ;
-        if [ -n $inject ]; then cp -r $inject out/arm64; fi 
+        for ARCH in ${ARCHS[@]} 
+        do 
+          
+          xz build-${ARCH}/subprojects/frida-core/lib/gadget/frida-gadget.so
+          xz build-${ARCH}/subprojects/frida-core/server/frida-server
+          xz build-${ARCH}/subprojects/frida-core/inject/frida-inject
         
-        rm -rf build
-
-        ./configure --host=android-arm --disable-frida-tools --disable-graft-tool --enable-gadget --enable-server  --disable-frida-python
-        make 
-        gadget=$(find build/subprojects -name frida-gadget.so  | head -n 1) ;
-        if [ -n $gadget ]; then cp ${gadget} out/arm 2>/dev/null; fi  
+        done 
         
-        agent=$(find build/subprojects -name frida-agent.so  | head -n 1) ;
-        if [ -n $agent ]; then cp  ${agent} out/arm 2>/dev/null; fi 
-
-        server=$(find build/subprojects -type f -name frida-server  | head -n 1);
-        if [ -n $server ]; then cp ${server} out/arm 2>/dev/null; fi 
-
-        inject=$(find build/subprojects -type f -name frida-inject  | head -n 1);
-        if [ -n $inject ]; then cp ${inject} out/arm 2>/dev/null; fi 
-        rm -rf build
-        
-        ./configure --host=android-x86_64  --disable-frida-tools --disable-graft-tool --enable-gadget --enable-server  --disable-frida-python
-        make
-        
-        gadget=$(find build/subprojects -name frida-gadget.so | head -n 1) ;
-        if [ -n $gadget ]; then cp ${gadget} out/x64 2>/dev/null; fi  
-        
-        agent=$(find build/subprojects -name frida-agent.so | head -n 1) ;
-        if [ -n $agent ]; then cp  ${agent} out/x64 2>/dev/null; fi 
-
-        server=$(find build/subprojects -type f -name frida-server  | head -n 1);
-        if [ -n $server ]; then cp  ${server} out/x64 2>/dev/null; fi 
-
-        inject=$(find build/subprojects -type f -name frida-inject  | head -n 1);
-        if [ -n $inject ]; then cp -r ${inject} out/x64 2>/dev/null; fi 
-         
-        rm -rf build
          
     - name: Check release version
       id: checkReleaseVersion
@@ -216,65 +186,7 @@ jobs:
           } catch (e) {
             core.setFailed(e.message);
           }
-    - name: package build result for Android
-      shell: bash
-      run: |
-        pushd $(find ../ -type d -name "frida" | head -n 1)
-        
-        if [ -e out/arm/frida-server ]; then
-          xz out/arm/frida-server ;
-        fi
-        if [ -e out/arm/frida-gadget.so ]; then
-          xz out/arm/frida-gadget.so ;
-        fi
-        if [ -e out/arm/frida-agent.so ]; then
-          xz out/arm/frida-agent.so
-        fi
-        if [ -e out/arm/frida-inject ] ; then 
-          xz out/arm/frida-inject ;
-        fi
-
-        if [ -e out/arm64/frida-server ]; then
-          xz out/arm64/frida-server ;
-        fi
-        if [ -e out/arm64/frida-gadget.so ]; then
-          xz out/arm64/frida-gadget.so ;
-        fi
-        if [ -e out/arm64/frida-agent.so ]; then
-          xz out/arm64/frida-agent.so
-        fi
-        if [ -e out/arm64/frida-inject ] ; then 
-          xz out/arm64/frida-inject ;
-        fi
-
-        if [ -e out/x64/frida-server ]; then
-          xz out/x64/frida-server ;
-        fi
-        if [ -e out/x64/frida-gadget.so ]; then
-          xz out/x64/frida-gadget.so ;
-        fi
-        if [ -e out/x64/frida-agent.so ]; then
-           xz out/x64/frida-agent.so
-        fi
-        if [ -e out/x64/frida-inject ] ; then 
-          xz out/x64/frida-inject ;
-        fi
-        
-
-    
-        # xz out/arm64/build/frida-android-arm/bin/frida-inject
-        # xz build/frida-android-arm64/bin/frida-inject
-        
-        # xz build/frida-android-x86/bin/frida-inject
-        # xz build/frida-android-x86_64/bin/frida-inject
-        
-        # xz build/frida-android-arm/lib/frida/32/frida-gadget.so
-        # xz build/frida-android-arm64/lib/frida/64/frida-gadget.so
-        
-        # xz build/frida-android-x86/lib/frida/32/frida-gadget.so
-        # xz build/frida-android-x86_64/lib/frida/64/frida-gadget.so
-        
-        popd
+   
         
     - name: Upload android arm frida-server for Undetected-Frida
       uses: actions/upload-release-asset@v1.0.2
@@ -282,7 +194,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: '${{ steps.checkReleaseVersion.outputs.upload_url }}'
-        asset_path: '${{ github.workspace }}/frida/out/arm/frida-server.xz'
+        asset_path: '${{ github.workspace }}/frida/build-android-arm/subprojects/frida-core/server/frida-server.xz'
         asset_name: 'undetected-frida-server-${{ needs.check_version.outputs.FRIDA_VERSION }}-android-arm.xz'
         asset_content_type: application/octet-stream
 
@@ -292,7 +204,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: '${{ steps.checkReleaseVersion.outputs.upload_url }}'
-        asset_path: '${{ github.workspace }}/frida/out/arm64/frida-server.xz'
+        asset_path: '${{ github.workspace }}/frida/build-android-arm64/subprojects/frida-core/server/frida-server.xz'
         asset_name: 'undetected-frida-server-${{ needs.check_version.outputs.FRIDA_VERSION }}-android-arm64.xz'
         asset_content_type: application/octet-stream
 
@@ -303,9 +215,10 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: '${{ steps.checkReleaseVersion.outputs.upload_url }}'
-        asset_path: '${{ github.workspace }}/frida/out/x64/frida-server.xz'
+        asset_path: '${{ github.workspace }}/frida/build-android-x86_64/subprojects/frida-core/server/frida-server.xz'
         asset_name: 'undetected-frida-server-${{ needs.check_version.outputs.FRIDA_VERSION }}-android-x86_64.xz'
         asset_content_type: application/octet-stream
+
         
     - name: Upload android arm frida-inject for Undetected-Frida
       uses: actions/upload-release-asset@v1.0.2
@@ -313,7 +226,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: '${{ steps.checkReleaseVersion.outputs.upload_url }}'
-        asset_path: '${{ github.workspace }}/frida/out/arm/frida-inject.xz'
+        asset_path: '${{ github.workspace }}/frida/build-android-arm/subprojects/frida-core/inject/frida-inject.xz'
         asset_name: 'undetected-frida-inject-${{ needs.check_version.outputs.FRIDA_VERSION }}-android-arm.xz'
         asset_content_type: application/octet-stream
         
@@ -323,10 +236,9 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: '${{ steps.checkReleaseVersion.outputs.upload_url }}'
-        asset_path: '${{ github.workspace }}/frida/out/arm64/frida-inject.xz'
+        asset_path: '${{ github.workspace }}/frida/build-android-arm64/subprojects/frida-core/inject/frida-inject.xz'
         asset_name: 'undetected-frida-inject-${{ needs.check_version.outputs.FRIDA_VERSION }}-android-arm64.xz'
         asset_content_type: application/octet-stream
-
 
     - name: Upload android x64 frida-inject for Undetected-Frida
       uses: actions/upload-release-asset@v1.0.2
@@ -334,7 +246,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: '${{ steps.checkReleaseVersion.outputs.upload_url }}'
-        asset_path: '${{ github.workspace }}/frida/out/x64/frida-inject.xz'
+        asset_path: '${{ github.workspace }}/frida/build-android-x86_64/subprojects/frida-core/inject/frida-inject.xz'
         asset_name: 'undetected-frida-inject-${{ needs.check_version.outputs.FRIDA_VERSION }}-android-x86_64.xz'
         asset_content_type: application/octet-stream
         
@@ -345,7 +257,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: '${{ steps.checkReleaseVersion.outputs.upload_url }}'
-        asset_path: '${{ github.workspace }}/frida/out/x64/frida-gadget.so.xz'
+        asset_path: '${{ github.workspace }}/frida/build-android-x86_64/subprojects/frida-core/lib/gadget/frida-gadget.so.xz'
         asset_name: 'undetected-frida-gadget-${{ needs.check_version.outputs.FRIDA_VERSION }}-android-x86_64.xz'
         asset_content_type: application/octet-stream
 
@@ -355,8 +267,8 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: '${{ steps.checkReleaseVersion.outputs.upload_url }}'
-        asset_path: '${{ github.workspace }}/frida/out/arm/frida-gadget.so.xz'
-        asset_name: 'undetected-frida-gadget-${{ needs.check_version.outputs.FRIDA_VERSION }}-android-arm.xz'
+        asset_path: '${{ github.workspace }}/frida/build-android-arm/subprojects/frida-core/lib/gadget/frida-gadget.so.xz'
+        asset_name: 'undetected-frida-gadget-${{ needs.check_version.outputs.FRIDA_VERSION }}-android-arm.so.xz'
         asset_content_type: application/octet-stream
 
       
@@ -366,7 +278,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: '${{ steps.checkReleaseVersion.outputs.upload_url }}'
-        asset_path: '${{ github.workspace }}/frida/out/arm64/frida-gadget.so.xz'
+        asset_path: '${{ github.workspace }}/frida/build-android-arm64/subprojects/frida-core/lib/gadget/frida-gadget.so.xz'
         asset_name: 'undetected-frida-gadget-${{ needs.check_version.outputs.FRIDA_VERSION }}-android-arm64.xz'
         asset_content_type: application/octet-stream
     # - name: Upload android x86_64 frida-inject for Undetected-Frida
